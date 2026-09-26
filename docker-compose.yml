@@ -1,0 +1,27 @@
+services:
+  api:
+    build: ../mvp-cotador-fipe-api
+    container_name: cotador-fipe-api
+    ports:
+      - "5000:5000"
+    environment:
+      CORS_ORIGINS: http://localhost:8080,http://127.0.0.1:8080
+    volumes:
+      - cotador-dados:/app/data
+    restart: unless-stopped
+
+  front:
+    build:
+      context: .
+      args:
+        VITE_API_URL: http://localhost:5000
+    container_name: cotador-fipe-front
+    ports:
+      - "8080:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  cotador-dados:
